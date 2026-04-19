@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
             --border: #333;
             --danger: #cf6679;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
@@ -24,15 +26,18 @@
             display: flex;
             justify-content: center;
         }
+
         .container {
             max-width: 650px;
             width: 100%;
         }
+
         h1 {
             text-align: center;
             color: var(--accent);
             margin-bottom: 5px;
         }
+
         .card {
             background-color: var(--panel-bg);
             border: 1px solid var(--border);
@@ -40,15 +45,18 @@
             padding: 20px;
             margin-bottom: 20px;
         }
+
         .input-group {
             display: flex;
             gap: 10px;
             align-items: flex-end;
             margin-bottom: 15px;
         }
+
         .input-field {
             flex-grow: 1;
         }
+
         label {
             display: flex;
             align-items: center;
@@ -59,7 +67,10 @@
             font-size: 0.85em;
             text-transform: uppercase;
         }
-        input, select, button {
+
+        input,
+        select,
+        button {
             width: 100%;
             padding: 12px;
             background-color: var(--bg-color);
@@ -69,12 +80,15 @@
             box-sizing: border-box;
             font-size: 16px;
         }
-        input:disabled, select:disabled {
+
+        input:disabled,
+        select:disabled {
             background-color: #2a2a2a;
             color: #666;
             cursor: not-allowed;
             border-style: dashed;
         }
+
         .btn-reset {
             width: auto;
             padding: 12px 15px;
@@ -82,8 +96,11 @@
             font-size: 0.8em;
             color: var(--text-main);
         }
-        .btn-reset:hover { background-color: var(--danger); }
-        
+
+        .btn-reset:hover {
+            background-color: var(--danger);
+        }
+
         .btn-calc {
             background-color: var(--accent);
             color: #000;
@@ -97,15 +114,16 @@
             display: inline-flex;
             justify-content: center;
             align-items: center;
-            width: 18px;
-            height: 18px;
+            width: 25px;
+            height: 25px;
             background: #444;
             border-radius: 50%;
-            font-size: 12px;
+            font-size: 20px;
             cursor: help;
             color: white;
             position: relative;
         }
+
         .tooltip {
             visibility: hidden;
             width: 280px;
@@ -116,15 +134,17 @@
             padding: 15px;
             position: absolute;
             z-index: 10;
-            top: 150%; /* Moves it down */
+            top: 150%;
+            /* Moves it down */
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
             font-weight: normal;
             text-transform: none;
             line-height: 1.4;
             font-size: 13px;
         }
+
         .tooltip::after {
             content: "";
             position: absolute;
@@ -135,7 +155,10 @@
             border-style: solid;
             border-color: transparent transparent #333 transparent;
         }
-        .info-icon:hover .tooltip { visibility: visible; }
+
+        .info-icon:hover .tooltip {
+            visibility: visible;
+        }
 
         .target-item {
             background-color: var(--panel-bg);
@@ -145,173 +168,193 @@
             margin-bottom: 10px;
             border-radius: 4px;
         }
-        .target-header { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-muted); font-size: 0.9em; }
-        .coord-display { color: var(--accent); font-family: monospace; }
-        .target-results { font-family: monospace; font-size: 1.1em; }
+
+        .target-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        .coord-display {
+            color: var(--accent);
+            font-family: monospace;
+        }
+
+        .target-results {
+            font-family: monospace;
+            font-size: 1.1em;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Reforger Artillery Calculator</h1>
+    <div class="container">
+        <h1>Reforger Artillery Calculator
+            <span class="info-icon">i
+                <div class="tooltip">
+                    <strong>Coordinate Input Guide:</strong><br><br>
+                    <strong>XY Grid (3-digits):</strong> <code>050 080</code><br>
+                    Grid position, snaps to center by default, can be read from under the cursor on the map<br><br>
+                    <strong>XY Direct (4+ digits):</strong> <code>0500 0825</code><br>
+                    Precise position, can be acquired by using laser on the drone<br><br>
+                    <strong>Z Value:</strong> <code>050 080 120</code><br>
+                    Always direct, read from under the cursor on the map<br><br>
+                    <strong>Numpads:</strong> <code>050 080 120 94</code> (Numpad 94) <br> Use numpad grid subdivision
+                    to fine tune the position within the grid (can be used as many times as you like)<br>
+                    <img src="image1.png" alt="Numpad Subgrid Visual Guide" class="tooltip-img" width="275px">
+                    <br><br>
+                    <strong>Name:</strong> Add text at the end to label targets.
+                </div>
+            </span>
+        </h1>
 
-    <div class="card">
-        <div class="input-group">
-            <div class="input-field">
-                <label>Weapon System</label>
-                <select id="weapon" onchange="lockWeapon()">
-                    <option value="" selected disabled>Choose Weapon...</option>
-                    <option value="grad">BM-21 Grad</option>
-                    <option value="howitzer">Howitzer</option>
-                </select>
+        <div class="card">
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Weapon System</label>
+                    <select id="weapon" onchange="lockWeapon()">
+                        <option value="" selected disabled>Choose Weapon...</option>
+                        <option value="grad">BM-21 Grad</option>
+                        <option value="howitzer">Howitzer</option>
+                    </select>
+                </div>
+                <button class="btn-reset" onclick="resetAll()">ALL RESET</button>
             </div>
-            <button class="btn-reset" onclick="resetAll()">ALL RESET</button>
-        </div>
 
-        <div class="input-group">
-            <div class="input-field">
-                <label>
-                    My Position (X Y Z)
-                    <span class="info-icon">i
-                        <div class="tooltip">
-                            <strong>Coordinate Input Guide:</strong><br><br>
-                            <strong>XY Grid (3-digits):</strong> <code>050 080</code><br>
-                            Grid position, snaps to center by default, can be read from under the cursor on the map<br><br>
-                            <strong>XY Direct (4+ digits):</strong> <code>0500 0825</code><br>
-                            Precise position, can be acquired by using laser on the drone<br><br>
-                            <strong>Z Value:</strong> <code>050 080 120</code><br>
-                            Always direct, read from under the cursor on the map<br><br>
-                            <strong>Numpads:</strong> <code>050 080 120 94</code> (Numpad 94) <br> Use numpad grid subdivision to fine tune the position within the grid (can be used as many times as you like)<br>
-                            <img src="image1.png" alt="Numpad Subgrid Visual Guide" class="tooltip-img" width="275px">
-                           <br><br>
-                            <strong>Name:</strong> Add text at the end to label targets.
-                        </div>
-                    </span>
-                </label>
-                <input type="text" id="pos" placeholder="X Y Z [Numpad]" autocomplete="off" onchange="lockPosition()">
+            <div class="input-group">
+                <div class="input-field">
+                    <label>
+                        My Position (X Y Z)
+                    </label>
+                    <input type="text" id="pos" placeholder="X Y Z [Numpad]" autocomplete="off"
+                        onchange="lockPosition()">
+                </div>
+                <button class="btn-reset" onclick="resetPosition()">POS RESET</button>
             </div>
-            <button class="btn-reset" onclick="resetPosition()">POS RESET</button>
+
+            <div class="input-field">
+                <label>Target Position</label>
+                <input type="text" id="target" placeholder="X Y Z [Numpad] [Name]" autocomplete="off">
+            </div>
+
+            <button class="btn-calc" onclick="calculateTarget()">CALCULATE FIRE MISSION</button>
         </div>
 
-        <div class="input-field">
-            <label>Target Position</label>
-            <input type="text" id="target" placeholder="X Y Z [Numpad] [Name]" autocomplete="off">
-        </div>
-
-        <button class="btn-calc" onclick="calculateTarget()">CALCULATE FIRE MISSION</button>
+        <div id="target-list"></div>
     </div>
 
-    <div id="target-list"></div>
-</div>
+    <script>
+        const GRAD_DATA = [[200, 19, 1.0, 110], [400, 23, 1.5, 108], [600, 29, 2.1, 102], [800, 35, 2.6, 91], [1000, 42, 3.1, 80], [1200, 48, 3.6, 70], [1400, 55, 4.2, 61], [1600, 62, 4.8, 54], [1800, 68, 5.3, 49], [2000, 75, 5.9, 45], [2200, 82, 6.4, 42], [2400, 89, 7.0, 39], [2600, 97, 7.6, 37], [2800, 104, 8.1, 35], [3000, 111, 8.7, 33], [3200, 119, 9.3, 31], [3400, 127, 9.9, 30], [3600, 134, 10.5, 28], [3800, 142, 11.1, 27], [4000, 150, 11.7, 26], [4200, 158, 12.4, 25], [4400, 166, 13.0, 25], [4600, 175, 13.6, 24], [4800, 183, 14.2, 23], [5000, 192, 14.9, 23], [5200, 200, 15.6, 22], [5400, 209, 16.2, 22], [5600, 218, 17.0, 22], [5800, 228, 17.6, 22]];
+        const HOWITZER_DATA = { 1: [[950, 1245, 24.4, 24], [1000, 1221, 24.2, 24], [1050, 1197, 24.0, 26], [1100, 1171, 23.7, 27], [1150, 1144, 23.4, 29], [1200, 1115, 23.1, 31], [1250, 1084, 22.7, 34], [1300, 1050, 22.3, 39], [1350, 1011, 21.8, 46], [1400, 965, 21.2, 58], [1450, 907, 20.3, 107], [1500, 800, 18.6, 0]], 2: [[1500, 1270, 33.1, 13], [1550, 1257, 33.0, 14], [1600, 1243, 32.9, 14], [1650, 1229, 32.7, 15], [1700, 1214, 32.5, 14], [1750, 1200, 32.4, 15], [1800, 1185, 32.1, 16], [1850, 1169, 31.9, 16], [1900, 1153, 31.7, 17], [1950, 1136, 31.5, 17], [2000, 1119, 31.2, 18], [2050, 1101, 31.0, 19], [2100, 1082, 30.7, 20], [2150, 1062, 30.3, 21], [2200, 1041, 30.0, 23], [2250, 1018, 29.6, 23], [2300, 995, 29.2, 28], [2350, 967, 28.7, 29], [2400, 938, 28.1, 34], [2450, 904, 27.5, 44], [2500, 860, 26.5, 0]], 3: [[2100, 1272, 41.0, 10], [2200, 1253, 40.8, 10], [2300, 1233, 40.5, 10], [2400, 1213, 40.2, 11], [2500, 1192, 39.9, 11], [2600, 1170, 39.5, 12], [2700, 1147, 39.1, 12], [2800, 1123, 38.7, 13], [2900, 1098, 38.3, 14], [3000, 1070, 37.7, 14], [3100, 1042, 37.2, 16], [3200, 1010, 36.5, 16], [3300, 975, 35.7, 18], [3400, 936, 34.9, 22], [3500, 890, 33.7, 28], [3600, 828, 32.1, 0]], 4: [[2600, 1271, 47.2, 8], [2700, 1255, 47.0, 7], [2800, 1240, 46.7, 8], [2900, 1224, 46.5, 9], [3000, 1207, 46.2, 9], [3100, 1190, 45.9, 9], [3200, 1172, 45.6, 9], [3300, 1154, 45.2, 9], [3400, 1135, 44.9, 9], [3500, 1116, 44.5, 10], [3600, 1095, 44.0, 10], [3700, 1074, 43.6, 11], [3800, 1052, 43.1, 12], [3900, 1028, 42.5, 12], [4000, 1003, 41.9, 14], [4100, 976, 41.3, 15], [4200, 946, 40.5, 17], [4300, 912, 39.6, 17], [4400, 874, 38.5, 20], [4500, 828, 37.2, 26]], 5: [[3000, 1271, 52.2, 7], [3100, 1258, 52.0, 7], [3200, 1244, 51.8, 7], [3300, 1230, 51.5, 7], [3400, 1216, 51.3, 7], [3500, 1202, 51.0, 7], [3600, 1187, 50.7, 7], [3700, 1172, 50.4, 8], [3800, 1156, 50.1, 7], [3900, 1140, 49.8, 8], [4000, 1124, 49.4, 9], [4100, 1107, 49.0, 9], [4200, 1089, 48.6, 9], [4300, 1071, 48.2, 9], [4400, 1052, 47.7, 10], [4500, 1032, 47.2, 10], [4600, 1011, 46.7, 10], [4700, 989, 46.1, 11], [4800, 966, 45.5, 12], [4900, 941, 44.7, 13], [5000, 913, 44.0, 14], [5100, 883, 43.1, 16], [5200, 850, 42.0, 20], [5300, 809, 40.7, 0]] };
 
-<script>
-    const GRAD_DATA = [[200, 19, 1.0, 110], [400, 23, 1.5, 108], [600, 29, 2.1, 102], [800, 35, 2.6, 91], [1000, 42, 3.1, 80], [1200, 48, 3.6, 70], [1400, 55, 4.2, 61], [1600, 62, 4.8, 54], [1800, 68, 5.3, 49], [2000, 75, 5.9, 45], [2200, 82, 6.4, 42], [2400, 89, 7.0, 39], [2600, 97, 7.6, 37], [2800, 104, 8.1, 35], [3000, 111, 8.7, 33], [3200, 119, 9.3, 31], [3400, 127, 9.9, 30], [3600, 134, 10.5, 28], [3800, 142, 11.1, 27], [4000, 150, 11.7, 26], [4200, 158, 12.4, 25], [4400, 166, 13.0, 25], [4600, 175, 13.6, 24], [4800, 183, 14.2, 23], [5000, 192, 14.9, 23], [5200, 200, 15.6, 22], [5400, 209, 16.2, 22], [5600, 218, 17.0, 22], [5800, 228, 17.6, 22]];
-    const HOWITZER_DATA = { 1: [[950, 1245, 24.4, 24], [1000, 1221, 24.2, 24], [1050, 1197, 24.0, 26], [1100, 1171, 23.7, 27], [1150, 1144, 23.4, 29], [1200, 1115, 23.1, 31], [1250, 1084, 22.7, 34], [1300, 1050, 22.3, 39], [1350, 1011, 21.8, 46], [1400, 965, 21.2, 58], [1450, 907, 20.3, 107], [1500, 800, 18.6, 0]], 2: [[1500, 1270, 33.1, 13], [1550, 1257, 33.0, 14], [1600, 1243, 32.9, 14], [1650, 1229, 32.7, 15], [1700, 1214, 32.5, 14], [1750, 1200, 32.4, 15], [1800, 1185, 32.1, 16], [1850, 1169, 31.9, 16], [1900, 1153, 31.7, 17], [1950, 1136, 31.5, 17], [2000, 1119, 31.2, 18], [2050, 1101, 31.0, 19], [2100, 1082, 30.7, 20], [2150, 1062, 30.3, 21], [2200, 1041, 30.0, 23], [2250, 1018, 29.6, 23], [2300, 995, 29.2, 28], [2350, 967, 28.7, 29], [2400, 938, 28.1, 34], [2450, 904, 27.5, 44], [2500, 860, 26.5, 0]], 3: [[2100, 1272, 41.0, 10], [2200, 1253, 40.8, 10], [2300, 1233, 40.5, 10], [2400, 1213, 40.2, 11], [2500, 1192, 39.9, 11], [2600, 1170, 39.5, 12], [2700, 1147, 39.1, 12], [2800, 1123, 38.7, 13], [2900, 1098, 38.3, 14], [3000, 1070, 37.7, 14], [3100, 1042, 37.2, 16], [3200, 1010, 36.5, 16], [3300, 975, 35.7, 18], [3400, 936, 34.9, 22], [3500, 890, 33.7, 28], [3600, 828, 32.1, 0]], 4: [[2600, 1271, 47.2, 8], [2700, 1255, 47.0, 7], [2800, 1240, 46.7, 8], [2900, 1224, 46.5, 9], [3000, 1207, 46.2, 9], [3100, 1190, 45.9, 9], [3200, 1172, 45.6, 9], [3300, 1154, 45.2, 9], [3400, 1135, 44.9, 9], [3500, 1116, 44.5, 10], [3600, 1095, 44.0, 10], [3700, 1074, 43.6, 11], [3800, 1052, 43.1, 12], [3900, 1028, 42.5, 12], [4000, 1003, 41.9, 14], [4100, 976, 41.3, 15], [4200, 946, 40.5, 17], [4300, 912, 39.6, 17], [4400, 874, 38.5, 20], [4500, 828, 37.2, 26]], 5: [[3000, 1271, 52.2, 7], [3100, 1258, 52.0, 7], [3200, 1244, 51.8, 7], [3300, 1230, 51.5, 7], [3400, 1216, 51.3, 7], [3500, 1202, 51.0, 7], [3600, 1187, 50.7, 7], [3700, 1172, 50.4, 8], [3800, 1156, 50.1, 7], [3900, 1140, 49.8, 8], [4000, 1124, 49.4, 9], [4100, 1107, 49.0, 9], [4200, 1089, 48.6, 9], [4300, 1071, 48.2, 9], [4400, 1052, 47.7, 10], [4500, 1032, 47.2, 10], [4600, 1011, 46.7, 10], [4700, 989, 46.1, 11], [4800, 966, 45.5, 12], [4900, 941, 44.7, 13], [5000, 913, 44.0, 14], [5100, 883, 43.1, 16], [5200, 850, 42.0, 20], [5300, 809, 40.7, 0]] };
-
-    function lockWeapon() {
-        if (document.getElementById('weapon').value) document.getElementById('weapon').disabled = true;
-    }
-
-    function lockPosition() {
-        if (document.getElementById('pos').value) document.getElementById('pos').disabled = true;
-    }
-
-    function resetAll() {
-        document.getElementById('weapon').disabled = false;
-        document.getElementById('weapon').value = "";
-        resetPosition();
-    }
-
-    function resetPosition() {
-        document.getElementById('pos').disabled = false;
-        document.getElementById('pos').value = "";
-        document.getElementById('target').value = "";
-        document.getElementById('target-list').innerHTML = "";
-    }
-
-    function parseCoordinates(inputStr) {
-        const parts = inputStr.trim().split(/\s+/);
-        if (parts.length < 3) throw new Error("Need X, Y, Z");
-        const rawX = parts[0], rawY = parts[1];
-        const isRaw = rawX.length >= 4;
-        let x = isRaw ? parseFloat(rawX) : parseFloat(rawX) * 100.0;
-        let y = isRaw ? parseFloat(rawY) : parseFloat(rawY) * 100.0;
-        const z = parseFloat(parts[2]);
-        let numpadStr = "", name = "Target";
-        if (parts.length > 3) {
-            if (/^[1-9]+$/.test(parts[3])) {
-                numpadStr = parts[3];
-                if (parts.length > 4) name = parts.slice(4).join(" ");
-            } else { name = parts.slice(3).join(" "); }
+        function lockWeapon() {
+            if (document.getElementById('weapon').value) document.getElementById('weapon').disabled = true;
         }
-        let size = isRaw ? 10.0 : 100.0;
-        const numpadMap = { '7':[0,2], '8':[1,2], '9':[2,2], '4':[0,1], '5':[1,1], '6':[2,1], '1':[0,0], '2':[1,0], '3':[2,0] };
-        if (numpadStr) {
-            for (let char of numpadStr) { size /= 3.0; const [col, row] = numpadMap[char]; x += col * size; y += row * size; }
-            x += (size / 2.0); y += (size / 2.0);
-        } else if (!isRaw) { x += 50.0; y += 50.0; }
-        return { x: Math.round(x), y: Math.round(y), z, name };
-    }
 
-    function interpolate(dist, table) {
-        if (dist < table[0][0] || dist > table[table.length - 1][0]) return null;
-        for (let i = 0; i < table.length - 1; i++) {
-            const [r1, e1, t1, de1] = table[i], [r2, e2, t2, de2] = table[i + 1];
-            if (dist >= r1 && dist <= r2) {
-                const ratio = (dist - r1) / (r2 - r1);
-                return { e: e1 + ratio * (e2 - e1), t: (t1 + ratio * (t2 - t1)).toFixed(1), de: de1 + ratio * (de2 - de1) };
+        function lockPosition() {
+            if (document.getElementById('pos').value) document.getElementById('pos').disabled = true;
+        }
+
+        function resetAll() {
+            document.getElementById('weapon').disabled = false;
+            document.getElementById('weapon').value = "";
+            resetPosition();
+        }
+
+        function resetPosition() {
+            document.getElementById('pos').disabled = false;
+            document.getElementById('pos').value = "";
+            document.getElementById('target').value = "";
+            document.getElementById('target-list').innerHTML = "";
+        }
+
+        function parseCoordinates(inputStr) {
+            const parts = inputStr.trim().split(/\s+/);
+            if (parts.length < 3) throw new Error("Need X, Y, Z");
+            const rawX = parts[0], rawY = parts[1];
+            const isRaw = rawX.length >= 4;
+            let x = isRaw ? parseFloat(rawX) : parseFloat(rawX) * 100.0;
+            let y = isRaw ? parseFloat(rawY) : parseFloat(rawY) * 100.0;
+            const z = parseFloat(parts[2]);
+            let numpadStr = "", name = "Target";
+            if (parts.length > 3) {
+                if (/^[1-9]+$/.test(parts[3])) {
+                    numpadStr = parts[3];
+                    if (parts.length > 4) name = parts.slice(4).join(" ");
+                } else { name = parts.slice(3).join(" "); }
             }
+            let size = isRaw ? 10.0 : 100.0;
+            const numpadMap = { '7': [0, 2], '8': [1, 2], '9': [2, 2], '4': [0, 1], '5': [1, 1], '6': [2, 1], '1': [0, 0], '2': [1, 0], '3': [2, 0] };
+            if (numpadStr) {
+                for (let char of numpadStr) { size /= 3.0; const [col, row] = numpadMap[char]; x += col * size; y += row * size; }
+                x += (size / 2.0); y += (size / 2.0);
+            } else if (!isRaw) { x += 50.0; y += 50.0; }
+            return { x: Math.round(x), y: Math.round(y), z, name };
         }
-        return null;
-    }
 
-    function calculateTarget() {
-        const weapon = document.getElementById('weapon').value;
-        const posInput = document.getElementById('pos').value;
-        const targetInput = document.getElementById('target').value;
-        if (!weapon || !posInput || !targetInput) return;
-
-        lockWeapon();
-        lockPosition();
-
-        try {
-            const pos = parseCoordinates(posInput);
-            const target = parseCoordinates(targetInput);
-            const dx = target.x - pos.x, dy = target.y - pos.y, dz = target.z - pos.z;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            let azMil = Math.round(((Math.atan2(dx, dy) * (180/Math.PI) + 360) % 360) * (6400/360));
-            let res = "";
-
-            if (weapon === 'grad') {
-                const sol = interpolate(dist, GRAD_DATA);
-                if (sol) res = `<div>↔ ${azMil} mil | ↕ <strong style="color:var(--accent)">${Math.round(sol.e + (dz / 100.0) * sol.de)} mil</strong> (${sol.t}s)</div>`;
-                else res = `<div style="color:var(--danger)">OUT OF RANGE</div>`;
-            } else {
-                for (let c = 1; c <= 5; c++) {
-                    const sol = interpolate(dist, HOWITZER_DATA[c]);
-                    if (sol) res += `<div>C${c}: ↔ ${azMil} | ↕ <strong>${Math.round(sol.e - (dz/100)*sol.de)}</strong> (${sol.t}s)</div>`;
+        function interpolate(dist, table) {
+            if (dist < table[0][0] || dist > table[table.length - 1][0]) return null;
+            for (let i = 0; i < table.length - 1; i++) {
+                const [r1, e1, t1, de1] = table[i], [r2, e2, t2, de2] = table[i + 1];
+                if (dist >= r1 && dist <= r2) {
+                    const ratio = (dist - r1) / (r2 - r1);
+                    return { e: e1 + ratio * (e2 - e1), t: (t1 + ratio * (t2 - t1)).toFixed(1), de: de1 + ratio * (de2 - de1) };
                 }
-                if (!res) res = `<div style="color:var(--danger)">OUT OF RANGE</div>`;
             }
+            return null;
+        }
 
-            const list = document.getElementById('target-list');
-            const item = document.createElement('div');
-            item.className = 'target-item';
-            // Show Actual Meter Coordinates here
-            item.innerHTML = `
+        function calculateTarget() {
+            const weapon = document.getElementById('weapon').value;
+            const posInput = document.getElementById('pos').value;
+            const targetInput = document.getElementById('target').value;
+            if (!weapon || !posInput || !targetInput) return;
+
+            lockWeapon();
+            lockPosition();
+
+            try {
+                const pos = parseCoordinates(posInput);
+                const target = parseCoordinates(targetInput);
+                const dx = target.x - pos.x, dy = target.y - pos.y, dz = target.z - pos.z;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                let azMil = Math.round(((Math.atan2(dx, dy) * (180 / Math.PI) + 360) % 360) * (6400 / 360));
+                let res = "";
+
+                if (weapon === 'grad') {
+                    const sol = interpolate(dist, GRAD_DATA);
+                    if (sol) res = `<div>↔ ${azMil} mil | ↕ <strong style="color:var(--accent)">${Math.round(sol.e + (dz / 100.0) * sol.de)} mil</strong> (${sol.t}s)</div>`;
+                    else res = `<div style="color:var(--danger)">OUT OF RANGE</div>`;
+                } else {
+                    for (let c = 1; c <= 5; c++) {
+                        const sol = interpolate(dist, HOWITZER_DATA[c]);
+                        if (sol) res += `<div>C${c}: ↔ ${azMil} | ↕ <strong>${Math.round(sol.e - (dz / 100) * sol.de)}</strong> (${sol.t}s)</div>`;
+                    }
+                    if (!res) res = `<div style="color:var(--danger)">OUT OF RANGE</div>`;
+                }
+
+                const list = document.getElementById('target-list');
+                const item = document.createElement('div');
+                item.className = 'target-item';
+                // Show Actual Meter Coordinates here
+                item.innerHTML = `
                 <div class="target-header">
                     <strong>${target.name}</strong>
                     <span>${Math.round(dist)}m | <span class="coord-display">${target.x} ${target.y} ${target.z}</span></span>
                 </div>
                 <div class="target-results">${res}</div>`;
-            
-            list.insertBefore(item, list.firstChild);            
-            document.getElementById('target').value = "";
-            document.getElementById('target').focus();
-        } catch (e) { alert("Invalid Coordinate Format"); }
-    }
 
-    document.getElementById('target').addEventListener('keypress', e => { if (e.key === 'Enter') calculateTarget(); });
-</script>
+                list.insertBefore(item, list.firstChild);
+                document.getElementById('target').value = "";
+                document.getElementById('target').focus();
+            } catch (e) { alert("Invalid Coordinate Format"); }
+        }
+
+        document.getElementById('target').addEventListener('keypress', e => { if (e.key === 'Enter') calculateTarget(); });
+    </script>
 </body>
+
 </html>
