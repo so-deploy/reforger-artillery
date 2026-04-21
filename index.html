@@ -264,19 +264,17 @@
                 <div class="tooltip">
 
                     <strong>About the calculator:</strong><br><br>
-                    Ballistic tables provided ingame are limited to arbitrary ranges, and are inaccurate (always undershoot). In this calculator i adjust for those and provide maximum effective range. <br>
-                    <strong>Current progress:</strong><br>
-                    ✅Grad - perfect accuracy<br>
-                    ❌Howitzer - base tables (so far)<br><br>
+                    Ballistic tables provided for grad are limited to arbitrary range (in reality it can shoot up to 10.6km), and are inaccurate (always undershoot). In this calculator i fix these problems.<br>
+                    Tables for Howitzer are pretty accurate, i just plugged them as they are.
                     <strong>Coordinate Input Guide:</strong><br><br>
                     <strong>XY Grid (3-digits):</strong> <code>050 080</code><br>
-                    Grid position, snaps to center by default, can be read from under the cursor on the map<br><br>
+                    Grid position, snaps to center by default, finetuned by numpad values, can be read from under the cursor on the map<br><br>
                     <strong>XY Direct (4+ digits):</strong> <code>0500 0825</code><br>
-                    Precise position, can be acquired by using laser on the drone<br><br>
+                    Precise position, can be acquired by using laser on the drone, or eyeballing on the map (grid 50 would be 5000, values increase up and right)<br><br>
                     <strong>Z Value:</strong> <code>050 080 120</code><br>
-                    Always direct, read from under the cursor on the map<br><br>
+                    Elevation, always direct, read from under the cursor on the map<br><br>
                     <strong>Numpads:</strong> <code>050 080 120 94</code> (Numpad 94) <br> Use numpad grid subdivision
-                    to fine tune the position within the grid (can be used as many times as you like)<br>
+                    to fine-tune the position within the grid (can be used as many times as you like)<br>
                     <img src="image1.png" alt="Numpad Subgrid Visual Guide" class="tooltip-img" width="275px">
                     <br><br>
                     <strong>Name:</strong> Add text at the end to label targets.
@@ -346,8 +344,6 @@
             4: [[2600, 1271, 47.2, 8], [2700, 1255, 47.0, 7], [2800, 1240, 46.7, 8], [2900, 1224, 46.5, 9], [3000, 1207, 46.2, 9], [3100, 1190, 45.9, 9], [3200, 1172, 45.6, 9], [3300, 1154, 45.2, 9], [3400, 1135, 44.9, 9], [3500, 1116, 44.5, 10], [3600, 1095, 44.0, 10], [3700, 1074, 43.6, 11], [3800, 1052, 43.1, 12], [3900, 1028, 42.5, 12], [4000, 1003, 41.9, 14], [4100, 976, 41.3, 15], [4200, 946, 40.5, 17], [4300, 912, 39.6, 17], [4400, 874, 38.5, 20], [4500, 828, 37.2, 26]],
             5: [[3000, 1271, 52.2, 7], [3100, 1258, 52.0, 7], [3200, 1244, 51.8, 7], [3300, 1230, 51.5, 7], [3400, 1216, 51.3, 7], [3500, 1202, 51.0, 7], [3600, 1187, 50.7, 7], [3700, 1172, 50.4, 8], [3800, 1156, 50.1, 7], [3900, 1140, 49.8, 8], [4000, 1124, 49.4, 9], [4100, 1107, 49.0, 9], [4200, 1089, 48.6, 9], [4300, 1071, 48.2, 9], [4400, 1052, 47.7, 10], [4500, 1032, 47.2, 10], [4600, 1011, 46.7, 10], [4700, 989, 46.1, 11], [4800, 966, 45.5, 12], [4900, 941, 44.7, 13], [5000, 913, 44.0, 14], [5100, 883, 43.1, 16], [5200, 850, 42.0, 20], [5300, 809, 40.7, 0]]
         };
-
-        const HOWITZER_COMPENSATION = { 1: [[0, 0], [20000, 0]], 2: [[0, 0], [20000, 0]], 3: [[0, 0], [20000, 0]], 4: [[0, 0], [20000, 0]], 5: [[0, 0], [20000, 0]] };
 
         let targetHistory = [];
 
@@ -515,8 +511,7 @@
                         for (let charge = 1; charge <= 5; charge++) {
                             const sol = interpolate(dist, HOWITZER_DATA[charge]);
                             if (sol) {
-                                const comp = getCompensation(dist, HOWITZER_COMPENSATION[charge]);
-                                const el = Math.round(sol.e + (dz / 100) * sol.de + comp) + t.offsets.el[charge];
+                                const el = Math.round(sol.e + (dz / 100) * sol.de) + t.offsets.el[charge];
                                 results += `<div class="result-line"><span style="width: 80px; font-weight: bold; color: var(--text-muted)">CHG ${charge}</span> ↕ <button class="adj-btn" onclick="changeOffset(${t.id}, 'el', -1, ${charge})">◀</button><strong style="color:var(--accent)">${el}</strong><button class="adj-btn" onclick="changeOffset(${t.id}, 'el', 1, ${charge})">▶</button><span class="offset-text ${t.offsets.el[charge] !== 0 ? 'active' : ''}">${t.offsets.el[charge] !== 0 ? '(' + (t.offsets.el[charge] > 0 ? '+' : '') + t.offsets.el[charge] + ')' : ''}</span> <span style="margin-left:10px; color:#777">(${Math.round(dist)}m / ${sol.t}s)</span></div>`;
                             }
                         }
