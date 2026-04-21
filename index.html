@@ -264,13 +264,16 @@
                 <div class="tooltip">
 
                     <strong>About the calculator:</strong><br><br>
-                    Ballistic tables provided for grad are limited to arbitrary range (in reality it can shoot up to 10.6km), and are inaccurate (always undershoot). In this calculator i fix these problems.<br><br>
-                    Tables for Howitzer are pretty accurate, i just plugged them as they are.
+                    Ballistic tables provided for grad are limited to arbitrary range (in reality it can shoot up to
+                    10.6km), and are inaccurate (always undershoot). In this calculator i fix these problems.<br><br>
+                    Tables for Howitzer are pretty accurate, i just plugged them as they are.<br><br>
                     <strong>Coordinate Input Guide:</strong><br><br>
                     <strong>XY Grid (3-digits):</strong> <code>050 080</code><br>
-                    Grid position, snaps to center by default, finetuned by numpad values, can be read from under the cursor on the map<br><br>
+                    Grid position, snaps to center by default, finetuned by numpad values, can be read from under the
+                    cursor on the map<br><br>
                     <strong>XY Direct (4+ digits):</strong> <code>0500 0825</code><br>
-                    Precise position, can be acquired by using laser on the drone, or eyeballing on the map (grid 50 would be 5000, values increase up and right)<br><br>
+                    Precise position, can be acquired by using laser on the drone, or eyeballing on the map (grid 50
+                    would be 5000, values increase up and right)<br><br>
                     <strong>Z Value:</strong> <code>050 080 120</code><br>
                     Elevation, always direct, read from under the cursor on the map<br><br>
                     <strong>Numpads:</strong> <code>050 080 120 94</code> (Numpad 94) <br> Use numpad grid subdivision
@@ -441,16 +444,22 @@
         function calculateTarget() {
             const input = document.getElementById('target').value;
             if (!input) return;
+            let p;
+
             try {
-                const p = parseCoordinates(input);
-                targetHistory.unshift({
-                    id: Date.now(),
-                    name: p.name, x: p.x, y: p.y, z: p.z,
-                    offsets: { az: 0, el: { grad: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } }
-                });
-                document.getElementById('target').value = "";
-                renderHistory();
-            } catch (e) { alert("Invalid Coordinate Format"); }
+                p = parseCoordinates(input);
+            } catch (e) {
+                alert("Invalid Coordinate Format");
+                return;
+            }
+
+            targetHistory.unshift({
+                id: Date.now(),
+                name: p.name, x: p.x, y: p.y, z: p.z,
+                offsets: { az: 0, el: { grad: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } }
+            });
+            document.getElementById('target').value = "";
+            renderHistory();
         }
 
         function renderHistory() {
@@ -499,23 +508,29 @@
                         if (sol) {
                             const comp = getCompensation(dist, GRAD_COMPENSATION);
                             const el = Math.round(sol.e + (dz / 100) * sol.de + comp) + t.offsets.el.grad;
-                            results = `<div class="result-line">${azUI} | ↕ <button class="adj-btn" onclick="changeOffset(${t.id}, 'el', -1, 'grad')">◀</button><strong style="color:var(--accent)">${el}</strong><button class="adj-btn" onclick="changeOffset(${t.id}, 'el', 1, 'grad')">▶</button><span class="offset-text ${t.offsets.el.grad !== 0 ? 'active' : ''}">${t.offsets.el.grad !== 0 ? '(' + (t.offsets.el.grad > 0 ? '+' : '') + t.offsets.el.grad + ')' : ''}</span> <span style="margin-left:10px; color:#777">(${Math.round(dist)}m / ${sol.t}s)</span></div>`;
-                        } else results = `<div style="color:var(--danger)">OUT OF RANGE (${Math.round(dist)}m / ${sol.t}s)</div>`;
+                            results = `<div class="result-line">${azUI} | ↕ <button class="adj-btn" onclick="changeOffset(${t.id}, 'el', -1, 'grad')">◀</button><strong style="color:var(--accent)">${el}</strong><button class="adj-btn" onclick="changeOffset(${t.id}, 'el', 1, 'grad')">▶</button><span class="offset-text ${t.offsets.el.grad !== 0 ? 'active' : ''}">${t.offsets.el.grad !== 0 ? '(' + (t.offsets.el.grad > 0 ? '+' : '') + t.offsets.el.grad + ')' : ''}</span> <span style="margin-left:10px; color:#777">(${Math.round(dist)}m)</span></div>`;
+                        } else {
+                            results = `<div style="color:var(--danger)">OUT OF RANGE (${Math.round(dist)}m)</div>`;
+                        }
                     } else {
                         // Howitzer uses Charge logic
                         results = ``;
-                        
+
                         // Add Azimuth UI
                         results += `<div class="result-line" style="border-bottom: 1px solid #333; margin-bottom: 10px; padding-bottom: 10px; background: transparent;">${azUI}</div>`;
-                        
+
+                        let validChargeFound = false;
                         for (let charge = 1; charge <= 5; charge++) {
                             const sol = interpolate(dist, HOWITZER_DATA[charge]);
                             if (sol) {
+                                validChargeFound = true;
                                 const el = Math.round(sol.e + (dz / 100) * sol.de) + t.offsets.el[charge];
                                 results += `<div class="result-line"><span style="width: 80px; font-weight: bold; color: var(--text-muted)">CHG ${charge}</span> ↕ <button class="adj-btn" onclick="changeOffset(${t.id}, 'el', -1, ${charge})">◀</button><strong style="color:var(--accent)">${el}</strong><button class="adj-btn" onclick="changeOffset(${t.id}, 'el', 1, ${charge})">▶</button><span class="offset-text ${t.offsets.el[charge] !== 0 ? 'active' : ''}">${t.offsets.el[charge] !== 0 ? '(' + (t.offsets.el[charge] > 0 ? '+' : '') + t.offsets.el[charge] + ')' : ''}</span> <span style="margin-left:10px; color:#777">(${Math.round(dist)}m / ${sol.t}s)</span></div>`;
                             }
                         }
-                        if (results.includes("Empty") && results.split("result-line").length === 2) results = `<div style="color:var(--danger)">OUT OF RANGE (${Math.round(dist)}m / ${sol.t}s)</div>`;
+                        if (!validChargeFound) {
+                            results = `<div style="color:var(--danger)">OUT OF RANGE (${Math.round(dist)}m)</div>`;
+                        }
                     }
                     html += `<div class="target-results">${results}</div>`;
                 }
